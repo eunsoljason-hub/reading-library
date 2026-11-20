@@ -1,0 +1,123 @@
+[
+ [
+  "live loads",
+  true,
+  "내 서재 — 읽고, 밑줄 긋고, 엮어서 한 권으로"
+ ],
+ [
+  "new stylesheet served",
+  true,
+  "https://reading-library-pi-nine.vercel.app/assets/styles.css?v=1.9.0"
+ ],
+ [
+  "serif webfont active",
+  true,
+  {
+   "noto": 166,
+   "serif": 157.99998474121094,
+   "pretendard": 150,
+   "sans": 157.99998474121094
+  }
+ ],
+ [
+  "sans webfont active",
+  true,
+  {
+   "noto": 166,
+   "serif": 157.99998474121094,
+   "pretendard": 150,
+   "sans": 157.99998474121094
+  }
+ ],
+ [
+  "ivory page background",
+  true,
+  "rgb(250, 248, 243)"
+ ],
+ [
+  "sample 3 books",
+  true,
+  3
+ ],
+ [
+  "covers use ivory/ink palette",
+  true,
+  [
+   "#FFFFFF #111111",
+   "#1A1A19 #F6F3EA",
+   "#EFE9DA #111111",
+   " ",
+   " "
+  ]
+ ],
+ [
+  "search filters to 1",
+  true,
+  1
+ ],
+ [
+  "sort by title",
+  true,
+  "덜어냄 연습"
+ ],
+ [
+  "book view opened",
+  true,
+  ""
+ ],
+ [
+  "6 genre chips",
+  true,
+  6
+ ],
+ [
+  "genre changes prompt",
+  true,
+  ""
+ ],
+ [
+  "active chip is ink",
+  true,
+  "rgb(17, 17, 17)"
+ ],
+ [
+  "studio opened",
+  true,
+  ""
+ ],
+ [
+  "studio has 3 books",
+  true,
+  3
+ ],
+ [
+  "studio preview has chapters",
+  true,
+  3314
+ ],
+ [
+  "settings opens",
+  true,
+  ""
+ ],
+ [
+  "mobile shelf 390 renders",
+  true,
+  ""
+ ],
+ [
+  "no horizontal overflow on mobile",
+  true,
+  0
+ ],
+ [
+  "no console/page errors (desktop)",
+  true,
+  []
+ ],
+ [
+  "no page errors (mobile)",
+  true,
+  []
+ ]
+]
