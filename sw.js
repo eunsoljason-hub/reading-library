@@ -1,10 +1,10 @@
 /* 내 서재 service worker — offline shell */
-const CACHE = 'nae-seoje-v1.1.0';
+const CACHE = 'nae-seoje-v1.1.1';
 const ASSETS = [
   './',
   './index.html',
-  './assets/styles.css',
-  './assets/app.js',
+  './assets/styles.css?v=1.1.0',
+  './assets/app.js?v=1.1.0',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -14,7 +14,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) => cache.addAll(ASSETS).catch(() => undefined))
+      .then((cache) => cache.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' }))).catch(() => undefined))
       .then(() => self.skipWaiting())
   );
 });
