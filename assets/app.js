@@ -1227,7 +1227,7 @@ const GENRE_PROMPTS = {
       '① 장면(누가 어디서) ② 인물이 원하는 것과 막는 것 ③ 대사 한 번 ④ 감각 디테일 ⑤ 장면을 닫는 행동',
     ban:
       '감정 요약(“그는 슬펐다”), 갑작스러운 결말, 실제 가족·아이를 실명으로 등장시키는 것(관계와 이름을 바꿔 익명화한다), 서술자가 인물을 설명하는 소개.',
-    deliver: 'H1 책 제목, H2 장면 5~8개, 각 장면 800~1,500자.',
+    deliver: 'H1 책 제목, H2 챕터 5~8개(장면 5~8개), 각 장면 800~1,500자.',
   },
 };
 
@@ -1420,7 +1420,8 @@ function renderMarkdown(md) {
   };
   for (const raw of lines) {
     const line = raw.replace(/\s+$/, '');
-    if (/^###\s+/.test(line)) { flushPara(); closeList(); html += '<h3>' + inlineMd(line.slice(4)) + '</h3>'; }
+    if (/^####\s+/.test(line)) { flushPara(); closeList(); html += '<h4>' + inlineMd(line.slice(5)) + '</h4>'; }
+    else if (/^###\s+/.test(line)) { flushPara(); closeList(); html += '<h3>' + inlineMd(line.slice(4)) + '</h3>'; }
     else if (/^##\s+/.test(line)) { flushPara(); closeList(); html += '<h2>' + inlineMd(line.slice(3)) + '</h2>'; }
     else if (/^#\s+/.test(line)) { flushPara(); closeList(); html += '<h1>' + inlineMd(line.slice(2)) + '</h1>'; }
     else if (/^---+\s*$/.test(line)) { flushPara(); closeList(); html += '<hr>'; }
