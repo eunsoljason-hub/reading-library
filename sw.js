@@ -1,5 +1,5 @@
 /* 내 서재 service worker — offline shell */
-const CACHE = 'nae-seoje-v1.0.0';
+const CACHE = 'nae-seoje-v1.1.0';
 const ASSETS = [
   './',
   './index.html',

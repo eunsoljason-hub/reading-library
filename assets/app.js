@@ -367,6 +367,8 @@ function renderShelf() {
   $('#shelfEmpty').hidden = hasBooks;
   $('#noResults').hidden = !(hasBooks && books.length === 0);
   grid.hidden = books.length === 0;
+  const cabinet = $('#shelfCabinet');
+  if (cabinet) cabinet.hidden = books.length === 0;
 
   books.forEach((book) => {
     const pc = photosOf(book.id).length;
@@ -382,7 +384,10 @@ function renderShelf() {
     btn.className = 'book-card-btn';
     btn.setAttribute('aria-label', `${book.title}${book.author ? ', ' + book.author : ''} — 사진 ${pc}장, 기록 ${nc}편`);
     btn.appendChild(makeCover(book));
-    card.appendChild(btn);
+    const stage = document.createElement('div');
+    stage.className = 'book-stage';
+    stage.appendChild(btn);
+    card.appendChild(stage);
 
     if (state.weaveMode) {
       const box = document.createElement('span');
@@ -414,6 +419,37 @@ function renderShelf() {
 
   updateShelfSummary();
   updateSelectionBar();
+  fillLastShelfRow();
+}
+
+/* 마지막 줄의 빈 칸에도 나무 선반이 이어지도록 빈 칸 채우기 */
+function shelfColumnCount(grid) {
+  const cards = [...grid.querySelectorAll('.book-card')];
+  if (!cards.length) return 1;
+  const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+  const cardWidth = cards[0].getBoundingClientRect().width;
+  if (!cardWidth) return 1;
+  return Math.max(1, Math.round((grid.clientWidth + gap) / (cardWidth + gap)));
+}
+
+function fillLastShelfRow() {
+  const grid = $('#shelfGrid');
+  if (!grid || grid.hidden) return;
+  grid.querySelectorAll('.shelf-filler').forEach((el) => el.remove());
+  const count = grid.querySelectorAll('.book-card').length;
+  if (!count) return;
+  const cols = shelfColumnCount(grid);
+  const missing = (cols - (count % cols)) % cols;
+  for (let i = 0; i < missing; i += 1) {
+    const filler = document.createElement('div');
+    filler.className = 'shelf-filler';
+    filler.setAttribute('role', 'presentation');
+    filler.setAttribute('aria-hidden', 'true');
+    const stage = document.createElement('div');
+    stage.className = 'book-stage';
+    filler.appendChild(stage);
+    grid.appendChild(filler);
+  }
 }
 
 function updateShelfSummary() {
@@ -1381,7 +1417,6 @@ function removeStudioBook(id) {
    ============================================================ */
 async function refreshStorageChip() {
   const chip = $('#storageChipText');
-  const dot = $('#storageChip .dot');
   const photoBytes = state.photos.reduce((s, p) => s + (p.bytes || 0), 0);
   try {
     const est = navigator.storage && navigator.storage.estimate ? await navigator.storage.estimate() : null;
@@ -1389,9 +1424,7 @@ async function refreshStorageChip() {
       if (chip) chip.textContent = `사진 ${state.photos.length}장`;
       return;
     }
-    const pct = est.quota ? (est.usage / est.quota) * 100 : 0;
     if (chip) chip.textContent = `사진 ${state.photos.length}장 · ${fmtBytes(est.usage)}`;
-    if (dot) dot.classList.toggle('warn', pct > 80);
     return est;
   } catch (_) {
     if (chip) chip.textContent = `사진 ${state.photos.length}장 · ${fmtBytes(photoBytes)}`;
@@ -1692,6 +1725,7 @@ function wireEvents() {
   $('#sortSelect').addEventListener('change', renderShelf);
   $('#weaveBtn').addEventListener('click', () => (state.weaveMode ? exitWeaveMode() : enterWeaveMode()));
   $('#sampleBtn').addEventListener('click', addSampleLibrary);
+  window.addEventListener('resize', debounce(fillLastShelfRow, 160));
 
   $('#shelfGrid').addEventListener('click', (e) => {
     const card = e.target.closest('.book-card');
