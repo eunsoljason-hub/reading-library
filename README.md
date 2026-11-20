@@ -73,7 +73,9 @@ python3 tests/e2e.py                    # 결과: 40+ checks, console error 0
 메모 저장, Markdown/TXT 다운로드, 클립보드 복사, 검색, 여러 책 엮기·미리보기,
 새로고침 후 유지, 저장공간 표시, JSON 백업 → 초기화 → 복원, 서비스 워커, 모바일 레이아웃.
 
-스크린샷: `screenshots/01-shelf-empty.png` … `screenshots/18-sample-lightbox.png`
+최근 실행 결과: `tests/RESULTS.md` (PASS 43 / FAIL 0, console error 0).
+
+스크린샷: `screenshots/01-shelf-empty.png` … `screenshots/19-offline.png`
 
 빈 서재에서 **샘플 서재로 둘러보기**를 누르면 예시 3권(밑줄 카드 포함)이 채워집니다.
 지우고 내 기록으로 시작해도 됩니다.
