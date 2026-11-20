@@ -198,10 +198,12 @@ h1 { color: var(--ink); }
   padding: 15px calc(var(--post-w) + var(--shelf-gap-x) * .5) 2px;
   background:
     repeating-linear-gradient(90deg,
-      rgba(148, 104, 60, .10) 0 1px, transparent 1px 9px,
-      rgba(148, 104, 60, .05) 9px 10px, transparent 10px 26px),
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 251, 242, .75), rgba(255, 251, 242, 0) 60%),
-    linear-gradient(180deg, #f1e0c3 0%, #e9d4b2 55%, #dfc6a0 100%);
+      rgba(116, 80, 40, .16) 0 1px, rgba(255, 249, 233, .28) 1px 2px, transparent 2px 119px),
+    repeating-linear-gradient(90deg,
+      rgba(148, 104, 60, .08) 0 1px, transparent 1px 9px,
+      rgba(148, 104, 60, .04) 9px 10px, transparent 10px 26px),
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 251, 242, .6), rgba(255, 251, 242, 0) 60%),
+    linear-gradient(180deg, #ecd7b4 0%, #e3cba5 55%, #d8bc93 100%);
   box-shadow: inset 0 10px 16px -12px rgba(70, 45, 20, .5), inset 16px 0 20px -18px rgba(70, 45, 20, .6),
     inset -16px 0 20px -18px rgba(70, 45, 20, .6);
 }
@@ -289,13 +291,13 @@ h1 { color: var(--ink); }
       transparent 2px 4px, rgba(88, 56, 24, .10) 4px 5px, transparent 5px 9px,
       rgba(255, 244, 222, .12) 9px 10px, transparent 10px 14px),
     linear-gradient(180deg,
-      #f7ddb5 0 2px, #e6c191 12%, #cfa26b 34%, #b3844e 62%, #8f6332 88%, #754d24 100%);
+      #f9e2bd 0 2px, #eecb9b 12%, #d9ab74 34%, #bd8d55 62%, #96693a 88%, #764d24 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 250, 240, .95),
-    inset 0 -3px 5px rgba(60, 38, 16, .42),
-    0 4px 0 -1px rgba(108, 72, 36, .5),
-    0 12px 18px -9px rgba(60, 38, 16, .58),
-    0 22px 30px -24px rgba(60, 38, 16, .65);
+    inset 0 1px 0 rgba(255, 252, 244, 1),
+    inset 0 -3px 5px rgba(60, 38, 16, .45),
+    0 4px 0 -1px rgba(102, 68, 34, .55),
+    0 8px 10px -6px rgba(52, 30, 10, .55),
+    0 16px 22px -16px rgba(52, 30, 10, .5);
 }
 
 .book-card-btn {
