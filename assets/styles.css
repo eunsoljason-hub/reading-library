@@ -162,7 +162,7 @@ h1 { color: var(--ink); }
 /* 찐 우드 책꽂이 — 원목 캐비닛 + 책마다 받침 선반 */
 .shelf-cabinet {
   --shelf-gap-x: clamp(12px, 1.9vw, 22px);
-  --plank-h: 13px;
+  --plank-h: 16px;
   --post-w: 18px;
   position: relative;
   margin-top: 2px;
@@ -198,10 +198,10 @@ h1 { color: var(--ink); }
   padding: 15px calc(var(--post-w) + var(--shelf-gap-x) * .5) 2px;
   background:
     repeating-linear-gradient(90deg,
-      rgba(148, 106, 62, .07) 0 1px, transparent 1px 7px,
-      rgba(148, 106, 62, .045) 7px 8px, transparent 8px 18px),
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 251, 242, .8), rgba(255, 251, 242, 0) 60%),
-    linear-gradient(180deg, #f4e5cd 0%, #eeddc2 55%, #e7d1b1 100%);
+      rgba(148, 104, 60, .10) 0 1px, transparent 1px 9px,
+      rgba(148, 104, 60, .05) 9px 10px, transparent 10px 26px),
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 251, 242, .75), rgba(255, 251, 242, 0) 60%),
+    linear-gradient(180deg, #f1e0c3 0%, #e9d4b2 55%, #dfc6a0 100%);
   box-shadow: inset 0 10px 16px -12px rgba(70, 45, 20, .5), inset 16px 0 20px -18px rgba(70, 45, 20, .6),
     inset -16px 0 20px -18px rgba(70, 45, 20, .6);
 }
@@ -282,19 +282,20 @@ h1 { color: var(--ink); }
   height: var(--plank-h);
   z-index: 2;
   pointer-events: none;
-  border-radius: 1px 1px 2px 2px;
+  border-radius: 1px 1px 3px 3px;
   background:
     repeating-linear-gradient(180deg,
-      rgba(88, 56, 24, .16) 0 1px, rgba(255, 244, 222, .16) 1px 2px,
-      transparent 2px 4px, rgba(88, 56, 24, .09) 4px 5px, transparent 5px 9px,
-      rgba(255, 244, 222, .10) 9px 10px, transparent 10px 13px),
-    linear-gradient(180deg, #efd0a4 0 2px, #ddb684 14%, #c99e68 38%, #b2854f 68%, #95693a 90%, #7c5227 100%);
+      rgba(88, 56, 24, .18) 0 1px, rgba(255, 244, 222, .18) 1px 2px,
+      transparent 2px 4px, rgba(88, 56, 24, .10) 4px 5px, transparent 5px 9px,
+      rgba(255, 244, 222, .12) 9px 10px, transparent 10px 14px),
+    linear-gradient(180deg,
+      #f7ddb5 0 2px, #e6c191 12%, #cfa26b 34%, #b3844e 62%, #8f6332 88%, #754d24 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 250, 240, .92),
-    inset 0 -2px 3px rgba(70, 44, 18, .38),
-    0 3px 0 -1px rgba(122, 84, 44, .5),
-    0 9px 14px -10px rgba(60, 38, 16, .5),
-    0 16px 26px -22px rgba(60, 38, 16, .55);
+    inset 0 1px 0 rgba(255, 250, 240, .95),
+    inset 0 -3px 5px rgba(60, 38, 16, .42),
+    0 4px 0 -1px rgba(108, 72, 36, .5),
+    0 12px 18px -9px rgba(60, 38, 16, .58),
+    0 22px 30px -24px rgba(60, 38, 16, .65);
 }
 
 .book-card-btn {
@@ -309,18 +310,22 @@ h1 { color: var(--ink); }
   transform: rotate(var(--tilt, 0deg));
   transform-origin: 50% 100%;
   box-shadow:
-    inset -4px 0 6px -4px rgba(0, 0, 0, .4),
-    inset -2px 0 0 rgba(255, 250, 238, .28),
+    inset -3px 0 0 rgba(255, 250, 238, .5),
+    inset -9px 0 12px -9px rgba(0, 0, 0, .5),
     3px 4px 8px -4px rgba(46, 28, 10, .5),
     0 16px 24px -18px rgba(46, 28, 10, .6);
   transition: transform .24s cubic-bezier(.2, .7, .3, 1), box-shadow .24s;
+}
+.book-card .cover::before {
+  width: 12px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .34), rgba(0, 0, 0, .05) 62%, rgba(255, 255, 255, .18) 92%, rgba(255, 255, 255, .04));
 }
 .book-card-btn:hover .cover,
 .book-card-btn:focus-visible .cover {
   transform: translateY(-7px) rotate(var(--tilt, 0deg));
   box-shadow:
-    inset -4px 0 6px -4px rgba(0, 0, 0, .4),
-    inset -2px 0 0 rgba(255, 250, 238, .28),
+    inset -3px 0 0 rgba(255, 250, 238, .5),
+    inset -9px 0 12px -9px rgba(0, 0, 0, .5),
     3px 5px 10px -4px rgba(46, 28, 10, .45),
     0 26px 30px -20px rgba(46, 28, 10, .55);
 }
@@ -342,6 +347,9 @@ h1 { color: var(--ink); }
 .badges span { display: inline-flex; align-items: center; gap: 3px; }
 .badges .b-photo::before { content: "▣"; font-size: .72rem; color: var(--accent); }
 .badges .b-note::before { content: "✎"; font-size: .72rem; color: var(--sage); }
+
+.shelf-cabinet .book-card-meta .author,
+.shelf-cabinet .badges { color: #6d5b47; }
 
 /* covers */
 .cover {
@@ -623,7 +631,7 @@ h1 { color: var(--ink); }
 }
 @media (max-width: 720px) {
   .brand-text small { display: none; }
-  .shelf-cabinet { --post-w: 13px; --plank-h: 11px; --shelf-gap-x: 14px; }
+  .shelf-cabinet { --post-w: 13px; --plank-h: 13px; --shelf-gap-x: 12px; }
   .cabinet-crown { height: 17px; border-radius: 10px 10px 3px 3px; }
   .cabinet-base { height: 15px; }
   .cabinet-body { padding-top: 12px; padding-bottom: 1px; }
