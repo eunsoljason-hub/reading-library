@@ -122,7 +122,7 @@ async def main():
         await mp.goto(LIVE, wait_until="networkidle")
         await mp.wait_for_timeout(1200)
         await mp.click("#sampleBtn")
-        await mp.wait_for_timeout(1600)
+        await mp.wait_for_timeout(4200)
         await mp.screenshot(path=f"{OUT}/live-ivory-black-mobile-390.png")
         await mp.screenshot(path=f"{OUT}/live-ivory-black-mobile-390-full.png", full_page=True)
         check("mobile shelf 390 renders", await mp.locator(".book-card").count() == 3)

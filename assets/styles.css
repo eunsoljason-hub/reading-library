@@ -1200,8 +1200,9 @@ main {
   }
   .topbar-actions { gap: 2px; }
   .shelf-head { flex-direction: column; align-items: stretch; gap: 20px; }
-  .shelf-tools { justify-content: space-between; }
-  .sort-wrap { flex: 1; }
+  .shelf-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .shelf-tools .btn { width: 100%; }
+  .sort-wrap { grid-column: 1 / -1; }
   .sort-wrap select { width: 100%; }
   .book-hero { align-items: flex-start; gap: 20px; }
   .cover.cover-lg { width: 104px; }
