@@ -115,14 +115,16 @@ async function dbClear(store) {
 }
 
 /* ---------------- state ---------------- */
+/* 표지 팔레트 — 아이보리와 먹색만. [밝은 쪽, 어두운 쪽, 글자색] */
 const PALETTES = [
-  ['#b0603c', '#8a4527'],
-  ['#7d8f78', '#546451'],
-  ['#8a7397', '#5f4d6c'],
-  ['#b28a48', '#84632c'],
-  ['#5f8391', '#3f5f6c'],
-  ['#96645a', '#6d423a'],
-  ['#55605c', '#373f3c'],
+  ['#EFE9DA', '#DCD3BD', '#111111'],
+  ['#1A1A19', '#0B0B0A', '#F6F3EA'],
+  ['#E8E2D4', '#D6CEBA', '#111111'],
+  ['#2C2C29', '#181816', '#EFEBE1'],
+  ['#FFFFFF', '#F5F1E5', '#111111'],
+  ['#DCD5C3', '#C8C0AC', '#111111'],
+  ['#3B3B36', '#26261F', '#E8E3D6'],
+  ['#FFFFFF', '#F2EEE2', '#111111'],
 ];
 
 const state = {
@@ -176,6 +178,7 @@ function makeCover(book, sizeClass = '') {
   const pal = PALETTES[book.color != null ? book.color % PALETTES.length : hashColor(book.title)] || PALETTES[0];
   el.style.setProperty('--c1', pal[0]);
   el.style.setProperty('--c2', pal[1]);
+  el.style.setProperty('--cf', pal[2] || '#111111');
 
   if (book.coverData) {
     el.classList.add('has-img');
@@ -459,7 +462,7 @@ function updateShelfSummary() {
   const p = state.photos.length;
   const m = state.notes.length;
   const el = $('#shelfSummary');
-  if (!n) el.textContent = '아직 책이 없어요. 첫 책을 세워볼까요?';
+  if (!n) el.textContent = '아직 서재가 비어 있어요.';
   else el.textContent = `책 ${n}권 · 밑줄 사진 ${p}장 · 나의 언어 ${m}편`;
 }
 
@@ -1344,13 +1347,13 @@ function buildBookMarkdown(book, { includePrompt = true, genre = state.genreBook
   if (book.author) lines.push(`**${book.author}**`);
   lines.push(`_${fmtDate(book.createdAt)}부터의 기록 · 밑줄 사진 ${photos.length}장 · 나의 언어 ${notes.length}편_`);
   if (book.summary && book.summary.trim()) {
-    lines.push('', '## 📝 이 책에 대하여', book.summary.trim());
+    lines.push('', '## 이 책에 대하여', book.summary.trim());
   }
   if (photos.length) {
-    lines.push('', '## 📷 밑줄과 사진', '', photoLines(photos));
+    lines.push('', '## 밑줄과 사진', '', photoLines(photos));
   }
   if (notes.length) {
-    lines.push('', '## ✍️ 나의 언어', '', noteBlock(notes));
+    lines.push('', '## 나의 언어', '', noteBlock(notes));
   }
   if (!photos.length && !notes.length) {
     lines.push('', '_아직 남긴 기록이 없어요._');
@@ -1378,8 +1381,8 @@ function buildStudioMarkdown({ title, intent, epilogue, books, includePrompt = t
     lines.push('', '---', '', `## ${i + 1}. ${x.book.title}`);
     if (x.book.author) lines.push(`**${x.book.author}**`);
     if (x.book.summary && x.book.summary.trim()) lines.push('', x.book.summary.trim());
-    if (x.photos.length) lines.push('', '### 📷 밑줄과 사진', '', photoLines(x.photos, 4));
-    if (x.notes.length) lines.push('', '### ✍️ 나의 언어', '', noteBlock(x.notes, 4));
+    if (x.photos.length) lines.push('', '### 밑줄과 사진', '', photoLines(x.photos, 4));
+    if (x.notes.length) lines.push('', '### 나의 언어', '', noteBlock(x.notes, 4));
     if (!x.photos.length && !x.notes.length) lines.push('', '_이 책에는 아직 기록이 없어요._');
   });
 
@@ -1788,18 +1791,25 @@ async function quoteImageBlob(quote, source, page) {
   canvas.height = 1500;
   const ctx = canvas.getContext('2d');
   const bg = ctx.createLinearGradient(0, 0, 1200, 1500);
-  bg.addColorStop(0, '#fbf4e8');
-  bg.addColorStop(1, '#efe2cf');
+  bg.addColorStop(0, '#FBFAF6');
+  bg.addColorStop(1, '#EFEAE0');
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 1200, 1500);
-  ctx.strokeStyle = 'rgba(176,96,60,.35)';
+  ctx.strokeStyle = 'rgba(17,17,17,.16)';
   ctx.lineWidth = 2;
   ctx.strokeRect(72, 72, 1056, 1356);
-  ctx.fillStyle = '#b0603c';
-  ctx.font = '600 30px "Noto Sans CJK KR", sans-serif';
-  ctx.fillText('UNDERLINE', 130, 190);
-  ctx.fillStyle = '#2b2520';
-  ctx.font = '500 62px "Noto Serif CJK KR", "Nanum Myeongjo", serif';
+  ctx.fillStyle = '#111111';
+  ctx.font = '500 26px "Inter", "Noto Sans CJK KR", sans-serif';
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '10px';
+  ctx.fillText('UNDERLINE', 130, 196);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+  ctx.strokeStyle = 'rgba(17,17,17,.22)';
+  ctx.beginPath();
+  ctx.moveTo(130, 232);
+  ctx.lineTo(230, 232);
+  ctx.stroke();
+  ctx.fillStyle = '#111111';
+  ctx.font = '300 58px "Noto Serif CJK KR", "Noto Serif KR", "Nanum Myeongjo", serif';
   const lines = wrapCanvasText(ctx, quote, 900);
   const lineH = 96;
   let y = 620 - ((lines.length - 1) * lineH) / 2;
@@ -1807,9 +1817,11 @@ async function quoteImageBlob(quote, source, page) {
     ctx.fillText(l, 130, y);
     y += lineH;
   });
-  ctx.fillStyle = '#8d8074';
-  ctx.font = '400 34px "Noto Sans CJK KR", sans-serif';
+  ctx.fillStyle = '#85827A';
+  ctx.font = '400 30px "Inter", "Noto Sans CJK KR", sans-serif';
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '3px';
   ctx.fillText(`${source}${page ? ' · p. ' + page : ''}`, 130, 1330);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
   const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.86));
   return blob;
 }
@@ -1821,7 +1833,7 @@ async function addSampleLibrary() {
     {
       title: '덜어냄 연습',
       author: '한서윤',
-      color: 0,
+      color: 4,
       summary: '많이 갖는 것이 아니라, 남길 것을 고르는 일에 대한 책. 읽고 나서 서랍 두 개를 비웠다.',
       notes: [
         { text: '덜어낸다는 건 비우는 게 아니라 고르는 일이다. 오늘 책상 위에서 손이 세 번 멈췄던 물건들을 떠올렸다.', day: 9 },
@@ -1835,7 +1847,7 @@ async function addSampleLibrary() {
     {
       title: '저녁의 문장들',
       author: '윤재하',
-      color: 4,
+      color: 1,
       summary: '하루의 끝에 남는 문장들. 잠들기 전에 한 페이지씩 읽었다.',
       notes: [{ text: '잘 쉬는 것도 연습이 필요하다는 말이 오래 남았다. 나는 쉬는 시간에도 뭔가를 하고 있었다.', day: 6 }],
       photos: [{ quote: '아무것도 하지 않는 저녁이 하루를 완성한다.', page: 201, caption: '지민이 재운 뒤 읽은 페이지.' }],
@@ -1843,7 +1855,7 @@ async function addSampleLibrary() {
     {
       title: '작은 습관의 방향',
       author: '이도현',
-      color: 1,
+      color: 0,
       summary: '습관은 의지가 아니라 환경의 문제라는 이야기. 현관에 운동화를 두었다.',
       notes: [{ text: '의지가 아니라 환경. 현관에 운동화를 꺼내 놓는 것만으로 아침이 조금 달라졌다.', day: 2 }],
       photos: [{ quote: '환경은 조용히 이긴다.', page: 41, caption: '현관 신발장 앞에서.' }],

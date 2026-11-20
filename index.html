@@ -5,14 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>내 서재 — 읽고, 밑줄 긋고, 엮어서 한 권으로</title>
 <meta name="description" content="밑줄 사진과 나의 언어로 책을 기록하고, 여러 책을 엮어 나만의 원고로 만드는 조용한 독서 서재." />
-<meta name="theme-color" content="#f6efe4" />
+<meta name="theme-color" content="#faf8f3" />
 <link rel="manifest" href="manifest.webmanifest" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500&family=Inter:wght@300;400;500&display=swap" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
 <link rel="icon" href="icons/icon-192.png" sizes="192x192" />
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="내 서재" />
-<link rel="stylesheet" href="assets/styles.css?v=1.8.0" />
+<link rel="stylesheet" href="assets/styles.css?v=1.9.0" />
 </head>
 <body>
 <a class="skip-link" href="#main">본문으로 건너뛰기</a>
@@ -21,7 +25,7 @@
   <div class="topbar-inner">
     <a class="brand" href="#shelf" aria-label="내 서재 홈">
       <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" width="26" height="26" fill="none">
+        <svg viewBox="0 0 32 32" width="19" height="19" fill="none">
           <path d="M5 7.5c3.2-1.2 6.4-1.2 9.6.6v17c-3.2-1.8-6.4-1.8-9.6-.6v-17Z" fill="currentColor" opacity=".9"/>
           <path d="M17.4 8.1c3-1.8 6.2-1.8 9.6-.6v17c-3.4-1.2-6.6-1.2-9.6.6v-17Z" fill="currentColor" opacity=".55"/>
           <path d="M16 8.1v17" stroke="currentColor" stroke-width="1.4" opacity=".7"/>
@@ -90,11 +94,9 @@
     </div>
 
     <div id="shelfCabinet" class="shelf-cabinet" hidden>
-      <div class="cabinet-crown" aria-hidden="true"></div>
       <div class="cabinet-body">
         <div id="shelfGrid" class="shelf-grid" role="list"></div>
       </div>
-      <div class="cabinet-base" aria-hidden="true"></div>
     </div>
     <p id="noResults" class="no-results" hidden>검색 결과가 없어요. 다른 단어로 찾아보세요.</p>
   </section>
@@ -365,7 +367,7 @@
 
     <section class="setting-block">
       <h3>앱 정보</h3>
-      <p class="hint">내 서재 v1.0 · 오프라인에서도 열려요. 모든 기록은 이 브라우저의 IndexedDB에만 저장되며 서버로 전송되지 않습니다. 홈 화면에 추가하면 앱처럼 실행됩니다.</p>
+      <p class="hint">내 서재 v1.9 · 오프라인에서도 열려요. 모든 기록은 이 브라우저의 IndexedDB에만 저장되며 서버로 전송되지 않습니다. 홈 화면에 추가하면 앱처럼 실행됩니다.</p>
       <div class="setting-actions">
         <button type="button" class="btn danger-ghost sm" id="resetBtn">모든 기록 지우기</button>
       </div>
@@ -390,6 +392,6 @@
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/app.js?v=1.8.0" defer></script>
+<script src="assets/app.js?v=1.9.0" defer></script>
 </body>
 </html>

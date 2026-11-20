@@ -46,6 +46,7 @@ async def main():
         # ---------- 1. add a book ----------
         await page.click("#addBookBtn")
         await page.wait_for_selector("#bookDialog[open]")
+        await page.wait_for_timeout(350)
         await page.fill("#bookTitleInput", "덜어냄 연습")
         await page.fill("#bookAuthorInput", "한서윤")
         await page.click(".swatch[data-color='2']")
@@ -154,7 +155,7 @@ async def main():
         md_path = os.path.join(SHOTS, "export-sample-book.md")
         await dl.save_as(md_path)
         md_text = open(md_path, encoding="utf-8").read()
-        check("book .md downloaded", dl.suggested_filename.endswith(".md") and "## ✍️ 나의 언어" in md_text, dl.suggested_filename)
+        check("book .md downloaded", dl.suggested_filename.endswith(".md") and "## 나의 언어" in md_text, dl.suggested_filename)
         check("book .md carries genre prompt", "AI 창작 프롬프트 — 에세이 · 회고" in md_text and "### 10. 마지막 자체 검수" in md_text)
 
         async with page.expect_download() as tx_info:
