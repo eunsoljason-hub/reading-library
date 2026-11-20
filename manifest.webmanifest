@@ -1,0 +1,25 @@
+{
+  "name": "내 서재 — 독서 기록과 책 엮기",
+  "short_name": "내 서재",
+  "description": "밑줄 사진과 나의 언어로 책을 기록하고, 여러 책을 엮어 나만의 원고로 만드는 조용한 독서 서재.",
+  "lang": "ko",
+  "dir": "ltr",
+  "id": "/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#f6efe4",
+  "theme_color": "#f6efe4",
+  "categories": ["books", "productivity", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "새 책 추가", "short_name": "새 책", "url": "./#shelf" },
+    { "name": "내 책 엮기", "short_name": "엮기", "url": "./#studio" }
+  ]
+}

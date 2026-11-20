@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>내 서재 — 읽고, 밑줄 긋고, 엮어서 한 권으로</title>
+<meta name="description" content="밑줄 사진과 나의 언어로 책을 기록하고, 여러 책을 엮어 나만의 원고로 만드는 조용한 독서 서재." />
+<meta name="theme-color" content="#f6efe4" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="내 서재" />
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#shelf" aria-label="내 서재 홈">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26" fill="none">
+          <path d="M5 7.5c3.2-1.2 6.4-1.2 9.6.6v17c-3.2-1.8-6.4-1.8-9.6-.6v-17Z" fill="currentColor" opacity=".9"/>
+          <path d="M17.4 8.1c3-1.8 6.2-1.8 9.6-.6v17c-3.4-1.2-6.6-1.2-9.6.6v-17Z" fill="currentColor" opacity=".55"/>
+          <path d="M16 8.1v17" stroke="currentColor" stroke-width="1.4" opacity=".7"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>내 서재</strong>
+        <small>읽고 · 밑줄 긋고 · 엮기</small>
+      </span>
+    </a>
+
+    <label class="search">
+      <svg fill="none" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7" fill="none"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="searchInput" type="search" placeholder="책 제목이나 저자로 찾기" aria-label="책 검색" autocomplete="off" />
+    </label>
+
+    <div class="topbar-actions">
+      <button id="storageChip" class="chip-btn" type="button" title="저장공간 현황 보기">
+        <span class="dot" aria-hidden="true"></span><span id="storageChipText">저장공간 확인</span>
+      </button>
+      <button id="settingsBtn" class="icon-btn" type="button" aria-label="설정" title="설정">
+        <svg fill="none" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 13.5a7.9 7.9 0 0 0 0-3l1.6-1.2-1.9-3.3-1.9.8a7.6 7.6 0 0 0-2.6-1.5L14.3 3h-3.8l-.3 2.3a7.6 7.6 0 0 0-2.6 1.5l-1.9-.8L3.8 9.3l1.6 1.2a7.9 7.9 0 0 0 0 3l-1.6 1.2 1.9 3.3 1.9-.8a7.6 7.6 0 0 0 2.6 1.5l.3 2.3h3.8l.3-2.3a7.6 7.6 0 0 0 2.6-1.5l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ══════════════ 서재 (책장) ══════════════ -->
+  <section id="view-shelf" class="view" aria-labelledby="shelfHeading">
+    <div class="shelf-head">
+      <div>
+        <p class="eyebrow">MY READING ROOM</p>
+        <h1 id="shelfHeading">나의 서재</h1>
+        <p class="lede" id="shelfSummary">아직 책이 없어요. 첫 책을 세워볼까요?</p>
+      </div>
+      <div class="shelf-tools">
+        <button id="addBookBtn" class="btn primary" type="button">
+          <svg fill="none" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          새 책
+        </button>
+        <button id="weaveBtn" class="btn ghost" type="button">
+          <svg fill="none" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 6.5h6.2v12H4zM13.8 6.5H20v12h-6.2" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10.2 9.5h3.6M10.2 13h3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          내 책 엮기
+        </button>
+        <div class="sort-wrap">
+          <label for="sortSelect" class="sr-only">정렬</label>
+          <select id="sortSelect">
+            <option value="recent">최근 기록순</option>
+            <option value="title">제목순</option>
+            <option value="added">추가한 순</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="shelfEmpty" class="empty-state" hidden>
+      <div class="empty-books" aria-hidden="true"><span></span><span></span><span></span></div>
+      <h2>첫 책을 세워볼까요?</h2>
+      <p>읽은 책을 한 권씩 꽂고, 마음에 남은 문장은 사진으로,<br />나의 생각은 목소리로 남겨보세요. 모두 이 기기 안에만 저장돼요.</p>
+      <div class="empty-actions">
+        <button class="btn primary" type="button" data-action="add">+ 첫 책 추가하기</button>
+        <button class="btn ghost" type="button" id="sampleBtn">샘플 서재로 둘러보기</button>
+      </div>
+    </div>
+
+    <div id="shelfGrid" class="shelf-grid" role="list"></div>
+    <p id="noResults" class="no-results" hidden>검색 결과가 없어요. 다른 단어로 찾아보세요.</p>
+  </section>
+
+  <!-- ══════════════ 책 한 권 ══════════════ -->
+  <section id="view-book" class="view" hidden aria-labelledby="bookTitle">
+    <button class="back-link" type="button" data-back>← 서재로</button>
+
+    <div class="book-hero">
+      <div id="bookCover" class="cover cover-lg" aria-hidden="true"></div>
+      <div class="book-hero-text">
+        <p class="eyebrow" id="bookEyebrow">READING LOG</p>
+        <h1 id="bookTitle">책 제목</h1>
+        <p class="book-author" id="bookAuthor"></p>
+        <div class="meta-chips" id="bookMeta"></div>
+        <div class="hero-actions">
+          <button class="btn ghost sm" type="button" data-edit-book>정보 수정</button>
+          <button class="btn danger-ghost sm" type="button" data-delete-book>책 삭제</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="책 기록 보기">
+      <button class="tab is-active" role="tab" aria-selected="true" data-tab="photos" id="tab-photos" aria-controls="photos">밑줄 사진 <span class="tab-count" data-count="photos">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="notes" id="tab-notes">나의 언어 <span class="tab-count" data-count="notes">0</span></button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="export" id="tab-export">정리 · 내보내기</button>
+    </div>
+
+    <div class="tab-panel" data-panel="photos" role="tabpanel" aria-labelledby="tab-photos">
+      <div class="panel-head">
+        <p class="hint">마음에 남은 문장을 사진으로. 올리면 자동으로 압축돼요(긴 변 1600px).</p>
+        <button class="btn primary sm" type="button" data-add-photo>+ 사진 추가</button>
+      </div>
+      <div id="photoGrid" class="photo-grid"></div>
+      <div id="photoEmpty" class="tiny-empty" hidden>
+        <p>아직 사진이 없어요.</p>
+        <p class="hint">책장을 펼쳐 밑줄 친 페이지를 찍어보세요. 페이지 번호와 짧은 메모도 함께 남길 수 있어요.</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+      <div class="note-composer">
+        <div class="composer-head">
+          <h2 id="composerTitle">내 생각 쓰기</h2>
+          <div class="dictation-controls">
+            <label class="sr-only" for="speechLang">음성 언어</label>
+            <select id="speechLang" class="select-sm">
+              <option value="ko-KR">한국어</option>
+              <option value="en-US">English</option>
+            </select>
+            <button id="micBtn" class="btn mic" type="button" aria-pressed="false" title="말해서 쓰기">
+              <svg fill="none" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M6 11.5a6 6 0 0 0 12 0M12 17.5V21M9 21h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <span id="micLabel">말로 쓰기</span>
+            </button>
+          </div>
+        </div>
+        <textarea id="noteInput" rows="4" placeholder="이 문장이 나에게 남긴 것… 편하게 적어보세요. 마이크를 누르고 말해도 돼요."></textarea>
+        <p id="speechStatus" class="speech-status" role="status" aria-live="polite"></p>
+        <div class="composer-foot">
+          <span class="hint" id="noteHint">저장하면 이 기기의 IndexedDB에만 남아요.</span>
+          <button id="saveNoteBtn" class="btn primary sm" type="button">기록 저장</button>
+        </div>
+      </div>
+      <div id="noteList" class="note-list"></div>
+      <div id="noteEmpty" class="tiny-empty" hidden><p>아직 나의 언어가 없어요.</p><p class="hint">한 문장이면 충분해요.</p></div>
+    </div>
+
+    <div class="tab-panel" data-panel="export" role="tabpanel" aria-labelledby="tab-export" hidden>
+      <div class="export-grid">
+        <div class="panel">
+          <h2>한 권으로 정리하기</h2>
+          <p class="hint">책 정보·밑줄 사진 설명·나의 생각을 한 편의 글로 묶어 복사하거나 파일로 내려받아요. 그대로 ChatGPT에 붙여넣어도 좋아요.</p>
+          <label class="field">
+            <span>책 요약 / 이 책을 읽은 이유 <em>(선택)</em></span>
+            <textarea id="bookSummary" rows="4" placeholder="예: 이 책은 '덜어냄'에 대한 이야기였다. 나는 지금 무엇을 덜어내야 할까."></textarea>
+          </label>
+          <label class="switch-row">
+            <input type="checkbox" id="includePromptBook" checked />
+            <span>AI 창작 프롬프트 템플릿 함께 넣기</span>
+          </label>
+          <div class="preview-actions">
+            <button class="btn primary sm" type="button" data-copy="book">전체 복사</button>
+            <button class="btn ghost sm" type="button" data-download="book" data-ext="md">.md 저장</button>
+            <button class="btn ghost sm" type="button" data-download="book" data-ext="txt">.txt 저장</button>
+          </div>
+        </div>
+        <div class="panel preview-panel">
+          <div class="preview-head"><h2>미리보기</h2><span class="hint" id="bookPreviewStat"></span></div>
+          <div id="bookPreview" class="preview markdown"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ 창작 스튜디오 (여러 책 엮기) ══════════════ -->
+  <section id="view-studio" class="view" hidden aria-labelledby="studioHeading">
+    <button class="back-link" type="button" data-back>← 서재로</button>
+    <div class="studio-head">
+      <p class="eyebrow">CREATIVE STUDIO</p>
+      <h1 id="studioHeading">내 책 엮기</h1>
+      <p class="lede">여러 권에서 길어 올린 기록을 목차와 챕터로 엮어, 나만의 원고 한 편으로.</p>
+    </div>
+
+    <div class="studio-grid">
+      <div class="panel">
+        <label class="field">
+          <span>엮은 책 제목</span>
+          <input id="studioTitle" type="text" placeholder="예: 덜어냄에 대하여" />
+        </label>
+
+        <div class="field">
+          <span class="field-label">엮을 책 <em id="studioCount"></em></span>
+          <ul id="studioBooks" class="studio-books"></ul>
+          <button class="btn ghost sm" type="button" id="addMoreBooks">+ 책 더 고르기</button>
+        </div>
+
+        <label class="field">
+          <span>기획 의도 / 서문 <em>(선택)</em></span>
+          <textarea id="studioIntent" rows="4" placeholder="왜 이 책들을 한 권으로 엮고 싶은지, 이 글을 누구에게 건네고 싶은지."></textarea>
+        </label>
+        <label class="field">
+          <span>에필로그 <em>(선택)</em></span>
+          <textarea id="studioEpilogue" rows="3" placeholder="마지막에 남기고 싶은 문장."></textarea>
+        </label>
+        <label class="switch-row">
+          <input type="checkbox" id="includePromptStudio" checked />
+          <span>AI 창작 프롬프트 템플릿 함께 넣기</span>
+        </label>
+        <div class="preview-actions">
+          <button class="btn primary sm" type="button" data-copy="studio">전체 복사</button>
+          <button class="btn ghost sm" type="button" data-download="studio" data-ext="md">.md 저장</button>
+          <button class="btn ghost sm" type="button" data-download="studio" data-ext="txt">.txt 저장</button>
+        </div>
+      </div>
+
+      <div class="panel preview-panel">
+        <div class="preview-head"><h2>통합 원고 미리보기</h2><span class="hint" id="studioStat"></span></div>
+        <div id="studioPreview" class="preview markdown"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="selectionBar" class="selection-bar" hidden>
+  <span id="selectionText">0권 선택</span>
+  <div>
+    <button class="btn ghost sm" type="button" id="selectionCancel">취소</button>
+    <button class="btn primary sm" type="button" id="selectionGo" disabled>이 책들 엮기 →</button>
+  </div>
+</div>
+
+<!-- ══════════════ 책 추가/수정 ══════════════ -->
+<dialog id="bookDialog" class="sheet">
+  <form id="bookForm" novalidate>
+    <div class="sheet-head">
+      <h2 id="bookDialogTitle">새 책</h2>
+      <button type="button" class="icon-btn" data-close aria-label="닫기">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="cover-picker">
+        <div id="coverPreview" class="cover cover-pick"><div class="cover-inner"><span class="cover-title">표지</span></div></div>
+        <div class="cover-picker-side">
+          <label class="btn ghost sm file-btn">
+            표지 사진
+            <input type="file" id="coverFile" accept="image/*" hidden />
+          </label>
+          <button type="button" class="btn ghost sm" id="coverClear">사진 지우기</button>
+          <p class="hint">표지가 없으면 제목으로 표지를 만들어요.</p>
+        </div>
+      </div>
+      <label class="field">
+        <span>제목 <em>필수</em></span>
+        <input type="text" id="bookTitleInput" required maxlength="80" placeholder="책 제목" />
+      </label>
+      <label class="field">
+        <span>저자</span>
+        <input type="text" id="bookAuthorInput" maxlength="60" placeholder="지은이" />
+      </label>
+      <div class="field">
+        <span class="field-label">표지 색</span>
+        <div class="swatches" id="swatches" role="radiogroup" aria-label="표지 색"></div>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn ghost" data-close>취소</button>
+      <button type="submit" class="btn primary" id="bookSubmit">서재에 꽂기</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ══════════════ 사진 추가 ══════════════ -->
+<dialog id="photoDialog" class="sheet">
+  <form id="photoForm">
+    <div class="sheet-head">
+      <h2>밑줄 사진 추가</h2>
+      <button type="button" class="icon-btn" data-close aria-label="닫기">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="upload-zone" id="uploadZone">
+        <div id="photoPreviewWrap" class="photo-preview-wrap" hidden>
+          <img id="photoPreviewImg" alt="추가할 사진 미리보기" />
+          <span id="photoSizeInfo" class="size-pill"></span>
+        </div>
+        <div id="uploadPrompt" class="upload-prompt">
+          <svg fill="none" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.2l1-1.6h5.6l1 1.6h1.2A2.5 2.5 0 0 1 20 8.5v8A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5v-8Z" stroke="currentColor" stroke-width="1.6" fill="none"/><circle cx="12" cy="12.5" r="3.2" stroke="currentColor" stroke-width="1.6" fill="none"/></svg>
+          <p>사진을 고르거나 지금 찍으세요</p>
+        </div>
+        <div class="upload-buttons">
+          <label class="btn primary sm file-btn">사진 선택<input type="file" id="photoFile" accept="image/*" hidden /></label>
+          <label class="btn ghost sm file-btn">카메라<input type="file" id="cameraFile" accept="image/*" capture="environment" hidden /></label>
+        </div>
+      </div>
+      <div class="two-col">
+        <label class="field"><span>페이지</span><input type="number" id="photoPage" inputmode="numeric" min="1" placeholder="예: 128" /></label>
+        <label class="field"><span>대표 인용문인가요?</span>
+          <span class="switch-row compact"><input type="checkbox" id="photoQuote" /><span>이 책의 대표 문장</span></span>
+        </label>
+      </div>
+      <label class="field">
+        <span>짧은 메모 <em>(선택)</em></span>
+        <input type="text" id="photoCaption" maxlength="140" placeholder="예: '덜어냄은 비움이 아니라 선택이다'" />
+      </label>
+    </div>
+    <div class="sheet-foot">
+      <button type="button" class="btn ghost" data-close>취소</button>
+      <button type="submit" class="btn primary" id="photoSubmit" disabled>사진 저장</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ══════════════ 설정 ══════════════ -->
+<dialog id="settingsDialog" class="sheet wide">
+  <div class="sheet-head">
+    <h2>설정 · 저장공간</h2>
+    <button type="button" class="icon-btn" data-close aria-label="닫기">✕</button>
+  </div>
+  <div class="sheet-body">
+    <section class="setting-block">
+      <h3>저장공간</h3>
+      <div class="meter"><div id="meterFill" class="meter-fill"></div></div>
+      <p class="storage-line" id="storageLine">확인 중…</p>
+      <div class="stat-row" id="storageStats"></div>
+      <div class="setting-actions">
+        <button type="button" class="btn ghost sm" id="persistBtn">이 기기에 영구 보관 허용</button>
+        <button type="button" class="btn ghost sm" id="refreshStorageBtn">새로고침</button>
+      </div>
+      <p class="hint" id="persistNote"></p>
+    </section>
+
+    <section class="setting-block">
+      <h3>백업 · 복원</h3>
+      <p class="hint">책·사진·메모 전부를 JSON 한 파일로 내려받아요. 기기를 바꾸거나 앱을 지우기 전에 꼭 백업해 두세요.</p>
+      <div class="setting-actions">
+        <button type="button" class="btn primary sm" id="backupBtn">JSON 백업 내려받기</button>
+        <label class="btn ghost sm file-btn">JSON 복원<input type="file" id="restoreFile" accept="application/json,.json" hidden /></label>
+      </div>
+      <p class="hint" id="backupNote"></p>
+    </section>
+
+    <section class="setting-block">
+      <h3>앱 정보</h3>
+      <p class="hint">내 서재 v1.0 · 오프라인에서도 열려요. 모든 기록은 이 브라우저의 IndexedDB에만 저장되며 서버로 전송되지 않습니다. 홈 화면에 추가하면 앱처럼 실행됩니다.</p>
+      <div class="setting-actions">
+        <button type="button" class="btn danger-ghost sm" id="resetBtn">모든 기록 지우기</button>
+      </div>
+    </section>
+  </div>
+</dialog>
+
+<!-- ══════════════ 사진 크게 보기 ══════════════ -->
+<div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+  <button class="lb-close" id="lbClose" aria-label="닫기">✕</button>
+  <button class="lb-nav prev" id="lbPrev" aria-label="이전 사진">‹</button>
+  <figure class="lb-figure">
+    <img id="lbImage" alt="" />
+    <figcaption>
+      <span id="lbMeta"></span>
+      <span id="lbCaption"></span>
+    </figcaption>
+  </figure>
+  <button class="lb-nav next" id="lbNext" aria-label="다음 사진">›</button>
+  <button class="lb-delete" id="lbDelete" type="button">이 사진 지우기</button>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/app.js" defer></script>
+</body>
+</html>
