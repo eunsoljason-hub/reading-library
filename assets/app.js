@@ -577,6 +577,7 @@ function openBook(id, updateHash = true) {
   }
   state.currentBookId = id;
   state.tab = 'photos';
+  resetNoteEditor();
   if (updateHash) location.hash = '#book/' + id;
   $('#view-shelf').hidden = true;
   $('#view-studio').hidden = true;
@@ -698,6 +699,9 @@ function updateShelfCounts() {
 
 /* photo dialog */
 function resetPhotoDialog() {
+  const prev = $('#photoPreviewImg').dataset.url;
+  if (prev) URL.revokeObjectURL(prev);
+  delete $('#photoPreviewImg').dataset.url;
   state.photoDraft = null;
   $('#photoFile').value = '';
   $('#cameraFile').value = '';
@@ -1797,17 +1801,15 @@ function wireEvents() {
   });
 
   // book export
-  $('#bookSummary').addEventListener(
-    'input',
-    debounce(async () => {
-      const book = bookById(state.currentBookId);
-      if (!book) return;
-      book.summary = $('#bookSummary').value;
-      book.updatedAt = Date.now();
-      await dbPut('books', book);
-      renderBookPreview();
-    }, 400)
-  );
+  const saveSummary = debounce(async (bookId, value) => {
+    const book = bookById(bookId);
+    if (!book) return;
+    book.summary = value;
+    book.updatedAt = Date.now();
+    await dbPut('books', book);
+    if (state.currentBookId === bookId) renderBookPreview();
+  }, 400);
+  $('#bookSummary').addEventListener('input', (e) => saveSummary(state.currentBookId, e.target.value));
   $('#includePromptBook').addEventListener('change', renderBookPreview);
   document.addEventListener('click', (e) => {
     const copy = e.target.closest('[data-copy]');
