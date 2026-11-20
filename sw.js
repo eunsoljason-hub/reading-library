@@ -1,10 +1,10 @@
 /* 내 서재 service worker — offline shell */
-const CACHE = 'nae-seoje-v1.2.0';
+const CACHE = 'nae-seoje-v1.3.0';
 const ASSETS = [
   './',
   './index.html',
-  './assets/styles.css?v=1.2.0',
-  './assets/app.js?v=1.2.0',
+  './assets/styles.css?v=1.3.0',
+  './assets/app.js?v=1.3.0',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
