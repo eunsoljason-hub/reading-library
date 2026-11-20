@@ -161,7 +161,7 @@ h1 { color: var(--ink); }
 
 /* 찐 우드 책꽂이 — 원목 캐비닛 + 책마다 받침 선반 */
 .shelf-cabinet {
-  --shelf-gap-x: clamp(14px, 2.4vw, 28px);
+  --shelf-gap-x: clamp(12px, 1.9vw, 22px);
   --plank-h: 13px;
   --post-w: 18px;
   position: relative;
@@ -198,10 +198,10 @@ h1 { color: var(--ink); }
   padding: 15px calc(var(--post-w) + var(--shelf-gap-x) * .5) 2px;
   background:
     repeating-linear-gradient(90deg,
-      rgba(148, 106, 62, .06) 0 1px, transparent 1px 7px,
-      rgba(148, 106, 62, .04) 7px 8px, transparent 8px 18px),
-    radial-gradient(120% 80% at 50% -10%, rgba(255, 251, 242, .85), rgba(255, 251, 242, 0) 60%),
-    linear-gradient(180deg, #f6e9d4 0%, #f2e1c8 55%, #ecd8bb 100%);
+      rgba(148, 106, 62, .07) 0 1px, transparent 1px 7px,
+      rgba(148, 106, 62, .045) 7px 8px, transparent 8px 18px),
+    radial-gradient(120% 80% at 50% -10%, rgba(255, 251, 242, .8), rgba(255, 251, 242, 0) 60%),
+    linear-gradient(180deg, #f4e5cd 0%, #eeddc2 55%, #e7d1b1 100%);
   box-shadow: inset 0 10px 16px -12px rgba(70, 45, 20, .5), inset 16px 0 20px -18px rgba(70, 45, 20, .6),
     inset -16px 0 20px -18px rgba(70, 45, 20, .6);
 }
@@ -265,14 +265,15 @@ h1 { color: var(--ink); }
 /* 책이 만드는 접촉 그림자 */
 .book-stage::before {
   content: "";
-  position: absolute; left: 2%; right: 2%; top: 100%; height: 15px;
+  position: absolute; left: 0; width: calc(var(--bw, 100%) + 6px); top: 100%; height: 15px;
   margin-top: -7px; border-radius: 50%;
-  background: radial-gradient(50% 50% at 50% 50%, rgba(44, 26, 8, .62) 0%, rgba(44, 26, 8, .26) 46%, rgba(44, 26, 8, 0) 74%);
+  background: radial-gradient(46% 50% at 50% 50%, rgba(44, 26, 8, .62) 0%, rgba(44, 26, 8, .24) 46%, rgba(44, 26, 8, 0) 76%);
   filter: blur(2px);
   z-index: 3;
   pointer-events: none;
   transition: opacity .24s, transform .24s;
 }
+.shelf-filler .book-stage::before { display: none; }
 .book-stage:hover::before { opacity: .78; transform: scaleX(1.05); }
 /* 책 한 권을 받치는 나무 선반 */
 .book-stage::after {
@@ -302,13 +303,14 @@ h1 { color: var(--ink); }
   border-radius: 6px;
 }
 .book-card .cover {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
+  position: absolute; left: 0; bottom: 0; top: auto; right: auto;
+  width: var(--bw, 100%); height: var(--bh, 100%);
   border-radius: 2px 8px 8px 2px;
   transform: rotate(var(--tilt, 0deg));
   transform-origin: 50% 100%;
   box-shadow:
     inset -4px 0 6px -4px rgba(0, 0, 0, .4),
+    inset -2px 0 0 rgba(255, 250, 238, .28),
     3px 4px 8px -4px rgba(46, 28, 10, .5),
     0 16px 24px -18px rgba(46, 28, 10, .6);
   transition: transform .24s cubic-bezier(.2, .7, .3, 1), box-shadow .24s;
@@ -318,17 +320,18 @@ h1 { color: var(--ink); }
   transform: translateY(-7px) rotate(var(--tilt, 0deg));
   box-shadow:
     inset -4px 0 6px -4px rgba(0, 0, 0, .4),
-    2px 3px 8px -3px rgba(46, 28, 10, .4),
-    0 24px 28px -20px rgba(46, 28, 10, .55);
+    inset -2px 0 0 rgba(255, 250, 238, .28),
+    3px 5px 10px -4px rgba(46, 28, 10, .45),
+    0 26px 30px -20px rgba(46, 28, 10, .55);
 }
 .book-card-btn:focus-visible { outline: 3px solid rgba(176, 96, 60, .4); outline-offset: 5px; }
-/* 책마다 조금씩 다른 기울기 — 바닥은 선반에 그대로 닿은 채 */
-.shelf-grid > .book-card:nth-child(6n+1) .cover { --tilt: -.5deg; }
-.shelf-grid > .book-card:nth-child(6n+2) .cover { --tilt: .24deg; }
-.shelf-grid > .book-card:nth-child(6n+3) .cover { --tilt: -.16deg; }
-.shelf-grid > .book-card:nth-child(6n+4) .cover { --tilt: .42deg; }
-.shelf-grid > .book-card:nth-child(6n+5) .cover { --tilt: -.3deg; }
-.shelf-grid > .book-card:nth-child(6n) .cover { --tilt: .12deg; }
+/* 책마다 다른 기울기와 판형 — 바닥은 선반에 그대로 닿은 채 */
+.shelf-grid > .book-card:nth-child(6n+1) { --tilt: -.5deg; --bw: 96%; --bh: 100%; }
+.shelf-grid > .book-card:nth-child(6n+2) { --tilt: .24deg; --bw: 100%; --bh: 97%; }
+.shelf-grid > .book-card:nth-child(6n+3) { --tilt: -.16deg; --bw: 93%; --bh: 99%; }
+.shelf-grid > .book-card:nth-child(6n+4) { --tilt: .42deg; --bw: 98%; --bh: 95%; }
+.shelf-grid > .book-card:nth-child(6n+5) { --tilt: -.3deg; --bw: 95%; --bh: 98%; }
+.shelf-grid > .book-card:nth-child(6n) { --tilt: .12deg; --bw: 100%; --bh: 96%; }
 .shelf-filler { display: flex; flex-direction: column; min-width: 0; pointer-events: none; }
 .book-card-meta { padding: 0 2px; }
 .book-card-meta h3 {
