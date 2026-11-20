@@ -535,6 +535,22 @@ h1 { color: var(--ink); }
 .swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); }
 .swatch.is-active { border-color: var(--ink); box-shadow: 0 0 0 3px var(--card), 0 0 0 4px var(--ink); }
 
+/* 장르 선택칩 */
+.genre-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.genre-chip {
+  border: 1px solid var(--line-strong); background: rgba(255, 253, 248, .72);
+  color: var(--ink-soft); border-radius: 999px; padding: 7px 13px;
+  font-size: .79rem; font-weight: 600; letter-spacing: -.01em;
+  transition: background .16s, border-color .16s, color .16s, transform .12s, box-shadow .16s;
+}
+.genre-chip:hover { background: #fffdf8; border-color: #c9b79d; }
+.genre-chip:active { transform: translateY(1px); }
+.genre-chip.is-active {
+  background: linear-gradient(160deg, #b9693f, #a4542f); border-color: transparent; color: #fff8ef;
+  box-shadow: 0 6px 14px -8px rgba(143, 74, 44, .85);
+}
+.genre-chip:focus-visible { outline: 3px solid rgba(176, 96, 60, .35); outline-offset: 2px; }
+
 .upload-zone { border: 1px dashed var(--line-strong); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; align-items: center; background: var(--paper-2); margin-bottom: 16px; text-align: center; }
 .upload-zone.is-drag { border-color: var(--accent); background: var(--accent-soft); }
 .upload-prompt { color: var(--muted); font-size: .82rem; display: flex; flex-direction: column; align-items: center; gap: 6px; }

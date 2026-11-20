@@ -142,6 +142,8 @@ const state = {
   weaveMode: false,
   selection: new Set(),
   studioBooks: [],
+  genreBook: 'essay',
+  genreStudio: 'essay',
   lightboxList: [],
   lightboxIndex: 0,
   speech: null,
@@ -1130,30 +1132,211 @@ function noteBlock(notes, level = 3) {
     .join('\n\n');
 }
 
-const PROMPT_BOOK = (count) => `## 🤖 AI 창작 프롬프트 (여기까지 함께 복사해 ChatGPT·Claude에 붙여넣으세요)
+/* ============================================================
+   AI 창작 프롬프트 — 장르별 프로 편집자 프롬프트
+   ============================================================ */
+const GENRES = [
+  { id: 'essay', label: '에세이 · 회고' },
+  { id: 'growth', label: '자기계발 · 실행' },
+  { id: 'business', label: '비즈니스 · 부' },
+  { id: 'parenting', label: '육아 · 가족' },
+  { id: 'humanities', label: '인문 · 사유' },
+  { id: 'fiction', label: '소설 · 창작' },
+];
 
-위는 내가 한 권의 책을 읽으며 남긴 밑줄 사진 설명과 나의 언어 기록이야. 너는 이 기록을 다듬어 한 편의 글로 만들어주는 편집자야. 다음을 만들어줘.
+const GENRE_PROMPTS = {
+  essay: {
+    name: '에세이 · 회고',
+    reader:
+      '아이를 키우거나 일과 삶 사이에서 자기 시간을 잃어가는 30~40대. 화려한 성공담이 아니라, 내 하루를 정확히 봐 주는 문장을 원하는 사람이다.',
+    formula:
+      '① 한 장면에 통찰 하나. 사건의 크기가 아니라 관찰의 정확도가 힘이다. ② 시간을 교차한다(지금의 장면 → 그때의 기억 → 다시 지금). ③ 사물 하나를 책 전체를 관통하는 모티프로 반복한다(서랍, 새벽 수유등, 현관의 신발). ④ 감정은 이름 붙이지 않고 행동과 사물로 보여준다. ⑤ 마지막 장은 결론이 아니라 “지금 나는 무엇을 보고 있는가”로 닫는다.',
+    titles:
+      '사물·장소·시간의 이름을 그대로 제목으로 쓴다(“서랍 두 개”, “새벽 세 시의 물컵”). 4~10자. 행복·성장·치유 같은 추상어를 단독으로 쓰지 않는다. 다섯 개 제목을 이어 읽으면 한 편의 짧은 글이 되어야 한다.',
+    rhythm:
+      '① 장면 한 줄(시간·장소·사물이 보이게) ② 그때 내가 한 행동 ③ 그 행동이 지금의 나에게 남긴 것 ④ 밑줄 문장 한 줄 ⑤ 지금의 나에게 던지는 질문 하나',
+    ban:
+      '“많이 힘들었다”, “그래서 나는 성장했다” 같은 감정 요약과 교훈적 마무리. 내 기록에 없는 명언 인용. “치유”, “위로” 같은 상투어 남발.',
+    deliver: 'H1 책 제목, H2 챕터 5~7개, 각 챕터 1,200~1,800자.',
+  },
+  growth: {
+    name: '자기계발 · 실행',
+    reader:
+      '복직·이직·새 습관을 앞두고 계획은 세우지만 3일을 넘기지 못하는 30~40대 직장인. 위로보다 “그래서 오늘 뭘 하지”를 원하는 사람이다.',
+    formula:
+      '① 독자가 겪는 구체적 장면으로 문제를 연다(출근길, 새벽 알람, 세 번째 실패). ② 원인을 의지가 아니라 구조에서 찾는다(환경, 마찰, 기준). ③ 해법은 3단계 이내로 압축하고 이름을 붙인다(예: “현관 3초 규칙”). ④ 반론을 먼저 처리한다(“바쁘면요?”, “아이가 있으면요?”). ⑤ 챕터마다 오늘 10분 안에 할 수 있는 실천 하나로 닫는다.',
+    titles:
+      '숫자 + 행동(“3일을 넘기는 법”, “현관에 두는 운동화 하나”). 6~14자. 제목만 이어 읽어도 실행 순서가 보이게 쓴다.',
+    rhythm:
+      '① 독자가 겪는 장면 ② 왜 의지의 문제가 아닌지 ③ 내가 바꾼 구조 하나 ④ 밑줄 문장 ⑤ “오늘 10분” 실천 한 줄',
+    ban:
+      '“의지력”, “동기부여”, “마인드셋”만 외치는 구호. 성공 사례를 자랑하는 문단. 같은 주장을 세 번 반복하는 것. “무조건”, “누구나 할 수 있다”.',
+    deliver: 'H1 책 제목, H2 챕터 5~7개, 각 챕터 끝에 “오늘 10분” 실천 1줄.',
+  },
+  business: {
+    name: '비즈니스 · 부',
+    reader:
+      '월급 외 수입을 처음 만들려는 직장인, 이미 작게 팔고 있지만 가격과 재구매에서 막힌 1인 사업자. 감동보다 숫자와 순서를 원하는 사람이다.',
+    formula:
+      '① 첫 장에서 “이 문제가 한 달에 얼마를 새게 하는지”를 숫자로 제시한다. ② 사례 → 원리 → 적용 순서로 쌓는다. ③ 방법에 이름을 붙여 기억하게 한다(프레임워크는 한 권에 하나면 충분하다). ④ 반대편 리스크와 실패 조건을 반드시 함께 쓴다(신뢰는 여기서 생긴다). ⑤ 마지막 장은 30일 실행 순서표로 끝낸다.',
+    titles:
+      '결과 + 기간(“30일 안에 첫 결제”, “가격을 올려도 팔리는 이유”). 숫자를 제목에 넣되 근거 없는 숫자는 쓰지 않는다.',
+    rhythm:
+      '① 독자가 실제로 겪는 손실 장면 ② 그 손실이 생기는 구조 ③ 내가 쓴 방법과 이름 ④ 예상 반론과 답 ⑤ 밑줄 문장 ⑥ 오늘 할 한 가지',
+    ban:
+      '“무조건”, “누구나 월 1억”, 근거 없는 시장 규모, 과장된 성공 신화. 내 기록에 없는 매출·전환율을 사실처럼 쓰는 것(예시면 “예: ”를 붙인다).',
+    deliver: 'H1 책 제목, H2 챕터 5~7개, 맨 끝에 30일 실행 순서표(체크리스트).',
+  },
+  parenting: {
+    name: '육아 · 가족',
+    reader:
+      '3~7세 아이를 키우는 부모. 훈육과 애정 사이에서 매일 흔들리고, 아이를 평가하지 않으면서도 기준은 세우고 싶은 사람이다.',
+    formula:
+      '① 아이의 말이나 행동 한 장면으로 연다(대사를 그대로). ② 그 순간 부모인 내가 당황한 지점을 숨기지 않는다. ③ 발달 관점의 해석은 한두 문장만 곁들인다(단정하지 않는다). ④ 오늘 바꿔 말할 한 문장을 제시한다. ⑤ 완벽한 부모 서사 대신 “다음에 다시 해보는” 여운으로 닫는다.',
+    titles:
+      '아이의 말을 제목으로 쓰거나(“엄마, 아직 안 자”), 장면의 이름을 쓴다(“현관에서 나가기까지 12분”).',
+    rhythm:
+      '① 아이의 장면과 대사 ② 그때 내가 느낀 당황 ③ 내가 해석한 이유 ④ 밑줄 문장 ⑤ 오늘 아이에게 건넬 한마디',
+    ban:
+      '아이를 평가하는 말(“착한 아이”, “예민한 아이”), 훈육법 단정(“이렇게 하면 무조건”), 아이의 사생활 과다 노출(이름·얼굴·어린이집 이름은 이니셜이나 “아이”로 바꾼다).',
+    deliver: 'H1 책 제목, H2 챕터 5~7개, 각 챕터 끝에 “오늘의 한마디”.',
+  },
+  humanities: {
+    name: '인문 · 사유',
+    reader:
+      '읽고 난 뒤 혼자 생각할 시간을 갖고 싶은 독자. 정답보다 질문, 요약보다 사유의 과정을 원하는 사람이다.',
+    formula:
+      '① 개념 하나를 붙잡고 시작한다(덜어냄, 기다림, 소유). ② 서로 당기는 두 관점을 나란히 놓는다(비움과 고름). ③ 개념을 내 일상의 장면으로 끌어내린다(서랍, 장바구니, 새벽). ④ 쉽게 결론내지 않고 질문을 남긴다. ⑤ 개념어는 한 챕터에 하나만 쓴다.',
+    titles:
+      '개념어 + 변주(“비움과 고름”, “남긴다는 것의 무게”). 4~12자. 개념을 설명하는 명사 나열을 피한다.',
+    rhythm:
+      '① 일상의 장면 ② 그 장면에서 떠오른 개념 ③ 개념을 둘러싼 두 관점 ④ 내 삶에 적용해 본 한 문장 ⑤ 질문 하나',
+    ban:
+      '철학자 이름을 나열해 권위를 만드는 것, 내 기록에 없는 인용, “본질적으로”, “~란 무엇인가”의 반복, 결론 강요.',
+    deliver: 'H1 책 제목, H2 챕터 5~6개, 각 챕터 마지막에 질문 1개.',
+  },
+  fiction: {
+    name: '소설 · 창작',
+    reader:
+      '짧은 소설을 좋아하는 독자. 설명된 감정이 아니라 장면에서 저절로 올라오는 감정을 원하는 사람이다.',
+    formula:
+      '① 기록을 사실이 아니라 재료로 쓴다. 인물을 새로 만든다(이름 하나, 욕망 하나, 결핍 하나). ② 각 기록을 장면으로 다시 배치한다(누가, 어디서, 무엇을 하다가). ③ 욕망이 좌절되고 인물이 선택하는 순간을 책의 중심에 둔다. ④ 감각을 쓴다(냄새, 소리, 온도, 손끝). ⑤ 결말은 설명하지 않고 마지막 행동으로 남긴다.',
+    titles:
+      '명사구로 쓴다(“빌린 우산”, “새벽 배송”). 인물·사물·장소의 이름. 줄거리를 설명하는 제목은 쓰지 않는다.',
+    rhythm:
+      '① 장면(누가 어디서) ② 인물이 원하는 것과 막는 것 ③ 대사 한 번 ④ 감각 디테일 ⑤ 장면을 닫는 행동',
+    ban:
+      '감정 요약(“그는 슬펐다”), 갑작스러운 결말, 실제 가족·아이를 실명으로 등장시키는 것(관계와 이름을 바꿔 익명화한다), 서술자가 인물을 설명하는 소개.',
+    deliver: 'H1 책 제목, H2 장면 5~8개, 각 장면 800~1,500자.',
+  },
+};
 
-1. 이 기록을 관통하는 주제 문장 3가지 (각 15자 안팎)
-2. 3~5개 소제목과 각 소제목에 들어갈 기록 배치
-3. 서문 초안 (600자) — 내가 쓴 1인칭 문체 유지
-4. 마무리 문단 (300자)
+function buildGenrePrompt(genreId, ctx = {}) {
+  const g = GENRE_PROMPTS[genreId] || GENRE_PROMPTS.essay;
+  const isStudio = ctx.mode === 'studio';
+  const books = Math.max(1, ctx.bookCount || 1);
+  const photos = ctx.photos || 0;
+  const notes = ctx.notes || 0;
+  const out = [];
 
-조건: 내 기록에 없는 사실이나 인용을 지어내지 말 것. 인용은 위에 적힌 문장만 사용할 것. 미사여구보다 내가 실제로 쓴 표현을 살릴 것.`;
+  out.push(`## 🤖 AI 창작 프롬프트 — ${g.name} (여기까지 함께 복사해 ChatGPT·Claude에 붙여넣으세요)`);
+  out.push('');
+  out.push('### 0. 역할');
+  out.push(
+    `너는 한국에서 ${g.name} 분야의 베스트셀러·스테디셀러를 20년 넘게 기획해 온 프로 편집자다. 100만 부가 넘는 책의 목차와 도입부를 직접 다듬었고, 무엇이 독자를 3페이지 안에 붙잡고 무엇이 30페이지에서 이탈시키는지 안다. 지금부터 아래 재료만 가지고, 내 목소리로 한 권의 책을 만든다.`
+  );
+  out.push('');
+  out.push('### 1. 재료');
+  out.push(
+    isStudio
+      ? `위는 내가 ${books}권의 책을 읽으며 남긴 기록을 엮은 원고다. 재료: 책 ${books}권 · 밑줄 사진 ${photos}장 · 나의 언어 ${notes}편.`
+      : `위는 내가 한 권의 책을 읽으며 남긴 기록이다. 재료: 책 1권 · 밑줄 사진 ${photos}장 · 나의 언어 ${notes}편.`
+  );
+  out.push(
+    '재료는 위에 적힌 기록뿐이다. 없는 사실·사건·인용을 만들지 않는다. 인용은 위에 적힌 문장만 쓴다. 기록이 얇은 곳은 추측으로 채우지 말고, 기록에 있는 다른 장면으로 대체하거나 [여기에 내 경험 한 문장]처럼 빈칸으로 남긴다. 내가 실제로 쓴 표현과 고유명사(아이 이름, 지명, 물건)는 그대로 살린다.'
+  );
+  out.push('');
+  out.push('### 2. 이 책의 자리 (타깃 독자 · 약속)');
+  out.push(g.reader);
+  out.push('이 독자가 서점에서 이 책을 집어 들었을 때, 30초 안에 “내 이야기다”라고 느끼게 만드는 것이 이 책의 일이다.');
+  out.push('');
+  out.push('### 3. 성공 공식 — 이 장르에서 독자가 끝까지 읽는 이유');
+  out.push(g.formula);
+  out.push('');
+  out.push('### 4. 목차 설계');
+  out.push(g.titles);
+  out.push('챕터는 5~7개. 각 챕터 제목 아래에 어떤 기록(어느 책의 어떤 밑줄·메모)을 배치할지 명시한다. 도입부 챕터에서는 독자가 이 책을 끝까지 읽어야 할 이유를 한 문장으로 약속하고, 마지막 챕터에서는 그 약속을 회수한다.');
+  out.push('');
+  out.push('### 5. 챕터 하나의 리듬 (모든 챕터가 같은 리듬을 탄다)');
+  out.push(g.rhythm);
+  out.push('첫 문장은 요약이 아니라 장면이다. 훅은 20자 안팎의 한 줄로 끊고, “요즘”, “최근에” 같은 도입을 쓰지 않는다. 챕터 안에서 밑줄 문장은 한 번만, 문단과 분리해 한 줄로 놓는다.');
+  out.push('');
+  out.push('### 6. 문체 규칙');
+  out.push(
+    '화자는 나다. 1인칭으로 쓰고 “우리는”으로 일반화하지 않는다. 한 문장은 60자 안팎, 한 문단은 3~5문장. 긴 문장 다음에는 짧은 문장을 놓고, 같은 길이의 문장을 세 번 연속 쓰지 않는다. 형용사 대신 동작과 사물로 쓴다(설명하지 말고 보여준다). 숫자·시간·고유명사를 넣어 장면을 구체적으로 만든다.'
+  );
+  out.push('');
+  out.push('### 7. 금지 목록');
+  out.push(
+    '“결론적으로”, “요약하자면”, “살펴보겠습니다”, “~라고 할 수 있습니다”, “~에 대해 알아보겠습니다”, “다양한 측면에서”, “긍정적인 영향을 미칩니다”, “시사하는 바가 큽니다”, “작은 변화가 큰 차이를 만듭니다”, “진정한”, “본질적으로”, “한마디로” — 이런 문장이 나오면 지우고 다시 쓴다. 이모지와 느낌표는 쓰지 않는다. 감정을 형용사로 먼저 말하지 않는다.'
+  );
+  out.push(g.ban);
+  out.push('');
+  out.push(isStudio ? '### 8. 여러 책 교차 편집 (신테시스)' : '### 8. 한 권 안의 재배치');
+  out.push(
+    isStudio
+      ? '책마다 한 챕터씩 배분하지 말고 주제별로 재배치한다. 한 챕터 안에서 A책의 장면 → B책의 개념 → 내 삶의 결론 순으로 교차하고, 인용에는 출처 책 제목을 붙인다. 책들 사이에서 반복되는 단어와 감정을 연결어로 삼는다. 기록이 겹치면 가장 구체적인 장면 하나만 남긴다. 책 순서는 내가 고른 순서를 존중하되, 흐름상 더 나은 순서가 있으면 이유와 함께 제안한다.'
+      : '한 권 안에서도 시간순으로 늘어놓지 말고 주제별로 재배치한다. 같은 이야기가 두 번 나오면 한 번만 남긴다. 기록이 많은 주제는 두 챕터로 나누고, 기록이 없는 주제는 챕터로 만들지 않는다.'
+  );
+  out.push('');
+  out.push('### 9. 진행 방식과 출력 형식');
+  out.push(
+    '바로 본문을 쓰지 말고 두 단계로 간다. 1단계: 책 제목 후보 5개 + 한 줄 소개(20자) + 타깃 독자 1문장 + 목차(챕터 제목과 각 챕터에 들어갈 내 기록 지정)만 제시하고 멈춘다. 내가 고르거나 고치면 2단계에서 챕터 본문을 쓴다. 마크다운으로 쓰고 H1은 책 제목, H2는 챕터다. 표는 쓰지 않는다.'
+  );
+  out.push(g.deliver);
+  out.push('');
+  out.push('### 10. 마지막 자체 검수');
+  out.push(
+    '답을 내기 전에 스스로 점검하고, 통과하지 못한 항목은 고친 뒤에 답한다. ① 첫 문장이 요약이 아니라 장면인가? ② 챕터 제목만 이어 읽어도 흐름이 보이는가? ③ 내가 쓰지 않은 사실·인용이 들어갔는가? ④ 같은 문장 구조가 세 번 반복되는가? ⑤ 챕터마다 밑줄 문장이 하나씩 있는가? ⑥ 마지막이 요약이 아니라 여운이나 다음 행동으로 끝나는가? 그리고 마지막에 “고칠 곳 3가지”를 스스로 지적한다.'
+  );
 
-const PROMPT_STUDIO = (count) => `## 🤖 AI 창작 프롬프트 (여기까지 함께 복사해 ChatGPT·Claude에 붙여넣으세요)
+  return out.join('\n');
+}
 
-위는 내가 ${count}권의 책을 읽으며 남긴 밑줄 사진 설명과 나의 언어 기록을 엮은 원고야. 너는 이 기록을 엮어 한 권의 책으로 만드는 편집자야. 다음을 만들어줘.
+function genreName(genreId) {
+  return (GENRE_PROMPTS[genreId] || GENRE_PROMPTS.essay).name;
+}
 
-1. 이 기록들을 관통하는 주제 문장 3가지 (각 15자 안팎)
-2. 5~7개 챕터의 목차 — 각 챕터에 어떤 책의 어떤 기록을 배치할지 매칭
-3. 서문 초안 (800자) — 내가 쓴 1인칭 문체 유지
-4. 각 챕터 도입부 3문장씩
-5. 에필로그 초안 (400자)
+function renderGenreChips(el, current) {
+  if (!el) return;
+  el.innerHTML = '';
+  GENRES.forEach((g) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'genre-chip' + (g.id === current ? ' is-active' : '');
+    b.dataset.genre = g.id;
+    b.setAttribute('role', 'radio');
+    b.setAttribute('aria-checked', g.id === current ? 'true' : 'false');
+    b.textContent = g.label;
+    el.appendChild(b);
+  });
+}
 
-조건: 내 기록에 없는 사실이나 인용을 지어내지 말 것. 인용은 위에 적힌 문장만 사용할 것. 감정적인 미사여구보다 내가 실제로 쓴 표현을 살릴 것.`;
+function setGenre(where, genreId) {
+  if (!GENRE_PROMPTS[genreId]) return;
+  if (where === 'studio') {
+    state.genreStudio = genreId;
+    renderGenreChips($('#studioGenreChips'), genreId);
+    renderStudioPreview();
+  } else {
+    state.genreBook = genreId;
+    renderGenreChips($('#bookGenreChips'), genreId);
+    renderBookPreview();
+  }
+  toast(`프롬프트를 ‘${genreName(genreId)}’ 장르로 바꿨어요.`);
+}
 
-function buildBookMarkdown(book, { includePrompt = true } = {}) {
+function buildBookMarkdown(book, { includePrompt = true, genre = state.genreBook } = {}) {
   const photos = photosOf(book.id);
   const notes = notesOf(book.id);
   const lines = [];
@@ -1172,11 +1355,12 @@ function buildBookMarkdown(book, { includePrompt = true } = {}) {
   if (!photos.length && !notes.length) {
     lines.push('', '_아직 남긴 기록이 없어요._');
   }
-  if (includePrompt) lines.push('', '---', '', PROMPT_BOOK(photos.length + notes.length));
+  if (includePrompt)
+    lines.push('', '---', '', buildGenrePrompt(genre, { mode: 'book', bookCount: 1, photos: photos.length, notes: notes.length }));
   return lines.join('\n');
 }
 
-function buildStudioMarkdown({ title, intent, epilogue, books, includePrompt = true }) {
+function buildStudioMarkdown({ title, intent, epilogue, books, includePrompt = true, genre = state.genreStudio }) {
   const all = books.map((b) => ({ book: b, photos: photosOf(b.id), notes: notesOf(b.id) }));
   const totalPhotos = all.reduce((s, x) => s + x.photos.length, 0);
   const totalNotes = all.reduce((s, x) => s + x.notes.length, 0);
@@ -1200,7 +1384,13 @@ function buildStudioMarkdown({ title, intent, epilogue, books, includePrompt = t
   });
 
   if (epilogue && epilogue.trim()) lines.push('', '---', '', '## 에필로그', epilogue.trim());
-  if (includePrompt) lines.push('', '---', '', PROMPT_STUDIO(books.length));
+  if (includePrompt)
+    lines.push(
+      '',
+      '---',
+      '',
+      buildGenrePrompt(genre, { mode: 'studio', bookCount: books.length, photos: totalPhotos, notes: totalNotes })
+    );
   return lines.join('\n');
 }
 
@@ -1287,7 +1477,7 @@ function downloadText(filename, text, mime = 'text/plain;charset=utf-8') {
 function currentBookMarkdown() {
   const book = bookById(state.currentBookId);
   if (!book) return '';
-  return buildBookMarkdown(book, { includePrompt: $('#includePromptBook').checked });
+  return buildBookMarkdown(book, { includePrompt: $('#includePromptBook').checked, genre: state.genreBook });
 }
 
 function renderBookPreview() {
@@ -1387,6 +1577,7 @@ function renderStudioPreview() {
     epilogue: $('#studioEpilogue').value,
     books,
     includePrompt: $('#includePromptStudio').checked,
+    genre: state.genreStudio,
   });
   $('#studioPreview').innerHTML = renderMarkdown(md);
   $('#studioStat').textContent = `${books.length}권 · ${md.length.toLocaleString('ko-KR')}자`;
@@ -1845,6 +2036,16 @@ function wireEvents() {
   }, 400);
   $('#bookSummary').addEventListener('input', (e) => saveSummary(state.currentBookId, e.target.value));
   $('#includePromptBook').addEventListener('change', renderBookPreview);
+  renderGenreChips($('#bookGenreChips'), state.genreBook);
+  renderGenreChips($('#studioGenreChips'), state.genreStudio);
+  $('#bookGenreChips').addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-genre]');
+    if (chip) setGenre('book', chip.dataset.genre);
+  });
+  $('#studioGenreChips').addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-genre]');
+    if (chip) setGenre('studio', chip.dataset.genre);
+  });
   document.addEventListener('click', (e) => {
     const copy = e.target.closest('[data-copy]');
     if (copy) {
@@ -1924,6 +2125,7 @@ function studioPayload() {
     epilogue: $('#studioEpilogue').value,
     books: studioBooksArray(),
     includePrompt: $('#includePromptStudio').checked,
+    genre: state.genreStudio,
   };
 }
 

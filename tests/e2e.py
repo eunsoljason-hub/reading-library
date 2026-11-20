@@ -131,6 +131,18 @@ async def main():
         check("book preview includes photo caption", "덜어냄은 비움이 아니라 선택이다" in preview_text)
         await page.screenshot(path=f"{SHOTS}/07-book-export.png", full_page=True)
 
+        # 장르 선택칩
+        book_chips = page.locator("#bookGenreChips .genre-chip")
+        check("book genre chips = 6", await book_chips.count() == 6, str(await book_chips.count()))
+        await page.click("#bookGenreChips [data-genre='fiction']")
+        await page.wait_for_timeout(400)
+        fiction_preview = await page.text_content("#bookPreview")
+        check("genre switch to 소설 prompt", "소설 · 창작" in fiction_preview and "장면 5~8개" in fiction_preview)
+        await page.click("#bookGenreChips [data-genre='essay']")
+        await page.wait_for_timeout(400)
+        essay_preview = await page.text_content("#bookPreview")
+        check("genre switch back to 에세이", "에세이 · 회고" in essay_preview and "소설 · 창작" not in essay_preview)
+
         await page.click("[data-copy='book']")
         await page.wait_for_timeout(600)
         clip = await page.evaluate("() => navigator.clipboard.readText()")
@@ -143,6 +155,7 @@ async def main():
         await dl.save_as(md_path)
         md_text = open(md_path, encoding="utf-8").read()
         check("book .md downloaded", dl.suggested_filename.endswith(".md") and "## ✍️ 나의 언어" in md_text, dl.suggested_filename)
+        check("book .md carries genre prompt", "AI 창작 프롬프트 — 에세이 · 회고" in md_text and "### 10. 마지막 자체 검수" in md_text)
 
         async with page.expect_download() as tx_info:
             await page.click("[data-download='book'][data-ext='txt']")
@@ -201,6 +214,13 @@ async def main():
         check("studio preview has chapters", "## " in studio_preview or "1." in studio_preview)
         check("studio preview includes both books", "덜어냄 연습" in studio_preview and "저녁의 문장들" in studio_preview)
         check("studio preview includes intent", "쉬는 법을 잊은 나에게" in studio_preview)
+
+        studio_chips = page.locator("#studioGenreChips .genre-chip")
+        check("studio genre chips = 6", await studio_chips.count() == 6, str(await studio_chips.count()))
+        await page.click("#studioGenreChips [data-genre='growth']")
+        await page.wait_for_timeout(500)
+        growth_preview = await page.text_content("#studioPreview")
+        check("studio genre switch updates prompt", "자기계발 · 실행" in growth_preview and "오늘 10분" in growth_preview)
         await page.wait_for_timeout(2600)
         await page.screenshot(path=f"{SHOTS}/10-studio.png", full_page=True)
 
@@ -211,6 +231,7 @@ async def main():
         await dl2.save_as(studio_path)
         studio_text = open(studio_path, encoding="utf-8").read()
         check("studio .md downloaded", dl2.suggested_filename.endswith(".md") and "## 목차" in studio_text, dl2.suggested_filename)
+        check("studio .md carries genre prompt", "AI 창작 프롬프트 — 자기계발 · 실행" in studio_text and "### 8. 여러 책 교차 편집" in studio_text)
 
         # ---------- 7. persistence after reload ----------
         await page.reload(wait_until="networkidle")
