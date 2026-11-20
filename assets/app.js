@@ -1272,7 +1272,7 @@ function enterWeaveMode() {
   state.selection.clear();
   renderShelf();
   updateSelectionBar();
-  toast('엮을 책을 골라주세요. 여러 권도 좋아요.');
+  toast('책을 눌러 엮고 싶은 책을 골라보세요. 여러 권도 좋아요.');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 

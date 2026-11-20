@@ -440,6 +440,7 @@ h1 { color: var(--ink); }
   max-width: min(90vw, 520px); text-align: center; box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .6);
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+.selection-bar:not([hidden]) ~ .toast { bottom: 100px; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
